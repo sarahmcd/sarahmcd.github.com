@@ -1,0 +1,49 @@
+p, h2, h3, ul {
+font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+color: #FFFF99;
+}
+
+body {
+margin-bottom: 55px;
+margin-left: 50px;
+margin-right: 10px;
+background: #000033;
+background-attachment: scroll;
+}
+
+p.title {
+font-size: 30px;
+border-bottom-style: double;
+border-bottom-width: 4px;
+}
+
+p.descrip {
+font-size: 16px;
+}
+
+p.bio {
+font-size: 18px;
+}
+
+#home {
+position: absolute;
+left: 70px;
+}
+
+#link2 {
+position: absolute;
+left: 150px;
+}
+
+a:link, a:visited {
+font-size: 20px;
+color: #66FF99;
+text-decoration: none;
+}
+
+a:hover {
+font-size: 20px;
+color: #FF6666;
+text-decoration: none;
+font-style: italic;
+}
