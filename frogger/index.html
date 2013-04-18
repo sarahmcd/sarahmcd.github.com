@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+		<title>Frogger</title>
+		<link rel="stylesheet" href="style.css">
+		<link rel="shortcut icon" href="assets/icon.png">
+		<script src="game.js"></script>
+	</head>
+	<body onload="game_loop()">
+		<div id="game_div">
+		<canvas id="game" height="565" width="399"></canvas>
+		<audio id="move" src="assets/move.wav" type="audio/wav"></audio>
+		<audio id="win" src="assets/win.wav" type="audio/wav"></audio>
+		<audio id="lose" src="assets/lose.wav" type="audio/wav"></audio>
+		</div>
+	</body>
+</html>
