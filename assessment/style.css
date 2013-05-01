@@ -1,0 +1,29 @@
+h1 {
+	font-style: italic;
+}
+
+p, h1, h2, h3, ul, .name, .detail, #email {
+	font-family: 'Ubuntu', sans-serif;
+	color: #FFF8DC;
+}
+
+p, body, .name, .detail {
+	margin-bottom: 55px;
+	margin-left: 50px;
+	margin-right: 50px;
+	background: #556B2F;
+	background-attachment: scroll;
+}
+
+.name, #email {
+	color: #4B0082;
+	font-style: oblique;
+}
+
+.name {
+	font-size: 25px;
+}
+
+.detail {
+	margin-left: 75px;
+}

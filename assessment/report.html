@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<head>
+	<title>Security Assessment of Scorecenter</title>
+	<link rel="stylesheet" href="style.css">
+	<link rel="shortcut icon" href="tetris.jpeg">
+	<link href='http://fonts.googleapis.com/css?family=Ubuntu' rel='stylesheet' type='text/css'>
+</head>
+<body>
+	<h1>Security Assessment of Scorecenter</h1>
+	<h2>COMP 20, Spring 2013 [Assignment 6]</br>
+	Sarah McDaniel</h2></br>
+	<h3>Introduction</h3>
+		<p>Ming Chow's COMP 20 students received the assignment of creating a Scorecenter web application. Students were required to write APIs enabling users to enter high scores for HTML5 web games, access all scores entered in the database, access the highest scores entered in the database, and search for a particular user's scores. Students ultimately made their Scorecenter applications accessible on Heroku.</br></br>
+		We were hired to perform a security analysis of a particular student's Scorecenter application. Our investigation of this application is of great urgency, as this student has been contracted to provide a high-security score-tracking database application system for the upcoming International Online Tetris Olympiad; it is the hope of our client that our findings will enable him/her to meet the terms of this contract within the next four weeks. In this report, we present security weaknesses found and suggested improvements.</p>
+	<h3>Methodology</h3>
+		<p>We both examined Scorecenter's source code and worked with its live Heroku-accessible version to test for its vulnerabilities. We also wrote several scripts and programs to use as tools in carrying out attacks on the site -- including a C++ program to concatenate large text files into a single input string and a bash script to automate the sending of various POST requests.</br></br>
+		Source code for Scorecenter is accessible <a href="https://github.com/tuftsdev/comp20-smcdaniel/blob/master/security/gfscorecenter.js">on GitHub</a>. The online version of Scorecenter is accessible at its <a href="http://aqueous-castle-7030.herokuapp.com/">Heroku address</a>.</p>
+	<h3>Abstract of Findings</h3>
+		<p>
+			<div class="detail">Security and Safety of User Input</br>
+				Restrictions on user input for POST requests are lacking; as Scorecenter is now, attackers may take advantage of the lack of input length restrictions to flood the database.</div>
+			<div class="detail">Ease of Access for Malicious User</br>
+				Currently, a user attempting to attack Scorecenter encounters no barriers to prevent him/her from continuously trying to penetrate it. An attacker with malicious intent may therefore spend all day hacking away at Scorecenter without ever running into difficulty.</div>
+			<div class="detail">Scale of Server</br>
+				Despite the fact that Scorecenter is an application designed for use by many users [say, many users participating in a gaming challenge or tournament], its server is too small and unstable to handle much web traffic.</div>
+		</p>
+	<h3>Issues Found</h3>
+		<p><div class="name">Input Sanitization</div>
+			<div class="detail">Location: 
+				<ul>
+					<li>POST API for submitting score to Scorecenter</li>
+				</ul>
+			Severity of issue: 
+				<ul>
+					<li>HIGH [This vulnerability leaves the database wide open to attackers seeking to crash it; once the database is crashed, Scorecenter is dead in the water, and the International Online Tetris Olympiad is sunk.]</li>
+				</ul>
+			Description of issue:
+				<ul>
+					<li>Although user input is sanitized insofar as an attacker may not input scripts or undeclared fields [fields other than username, game_title, score, and created_at], there is no limit to the length of strings submitted. An attacker may thus submit absurdly long string in the input fields and crash the database.</li>
+					<li>Additionally, users may modify and/or fabricate the scores they receive in HTML5 games when sending POST requests. In the context of such high-stakes tournaments as the International Online Tetris Olympiad, this poses a serious risk to the integrity of the game.</li>
+					<li>EXAMPLE: I submitted a 'high score' containing T.S. Eliot's masterful modernist poem "The Love Song of J. Alfred Prufrock" as the username. Much as one may love seeing an eleven-odd page poem show up in a database, one must admit the dangerous inconvenience that this same poem poses in the context of database-crashing.</li>
+				</ul>
+			Images of woe and horror:</br>
+			<a href="prufrock.html">A wee bit of poetry...</a></br>
+			<a href="concat.html">...concatenated together...</a></br></br>
+			<img src="long.jpg" alt="Username: Prufrock"></br></br>
+			Resolution of issue:
+				<ul>
+					<li>Use the HTML5 attribute [for form input] maxlength; specify, for example, maxlength="10".</li>
+				</ul>
+			</div>
+		<div class="name">Lack of IP Address Monitoring</div>
+			<div class="detail">Location: 
+				<ul>
+					<li>POST API for submitting score to Scorecenter</li>
+				</ul>
+			Severity of issue: 
+				<ul>
+					<li>HIGH [This vulnerability allows an attacker to target Scorecenter repeatedly with any interruption, enabling him/her to find a security loophole and gain a foothold in pursuit of any given malevolent end.]</li>
+				</ul>
+			Description of issue:
+				<ul>
+					<li>There is no limit to the number of times that a user from a particular IP address may attempt to post to Scorecenter. An attacker can continuously bombard Scorecenter with post requests -- sending, say, 5,000,000 requests in the span of a day -- because his/her IP address will never be blocked [temporarily or permanently] from the application.</li>
+					<li>EXAMPLE: I wrote a bash script to repeatedly bombard Scorecenter with ridiculous post requests. I simply executed my script, sat back, and watched it fly, attacking the database in absurd ways at an absurd frequency.</li>
+				</ul>
+			Images of woe and horror:</br>
+			<a href="script.html">A simple and dangerous script</a></br></br>
+			<img src="prufrock.jpg" alt="A couple entries from our friend frogger"></br></br>
+			Resolution of issue:
+				<ul>
+					<li>Blacklist IP addresses after a certain number of POST requests in a certain time interval using a utility such as that documented <a href="http://www.west-wind.com/weblog/posts/2007/Apr/28/Blocking-IIS-IP-Addresses-with-ASPNET">here</a>.</li>
+				</ul>
+			</div>
+		<div class="name">Risk of DDoS Attack</div>
+			<div class="detail">Location: 
+				<ul>
+					<li>JS file gfscorecenter.js [file containing all APIs for Scorecenter]</li>
+				</ul>
+			Severity of issue: 
+				<ul>
+					<li>MEDIUM [This vulnerability is of oscillating severity: During times of significant web traffic -- such as the finals of the International Online Tetris Olympiad -- life becomes more risky.]</li>
+				</ul>
+			Description of issue:
+				<ul>
+					<li>This web application will be unable to withstand heavy user traffic. [Consider the classic example of a website 'going viral' via a platform such as Reddit. People flock to it in hordes... and it crashes.] Because this application is intended to be used for high-profile, high-traffic sporting and gaming events by technologically-oriented people, it is essential that its server be able to bear many, many requests from many, many users.</li>
+					<li>Scorecenter is thus vulnerable to a distributed denial-of-service [DDoS] attack, in which attackers would seek to flood its server and take it down.</li>
+					<li>SAMPLE SITUATION: Where Scorecenter to be further developed as -- or used in conjunction with -- a gambling service, attackers would have a distinct monetary interest in bringing it down. [Suppose Scorecenter profits five cents per bet placed; attackers seeking to develop a similar gambling site could benefit enormously from directing these customers to their own site.]</li>
+				</ul>
+			Resolution of issue:
+				<ul>
+					<li>Invest in more substantive servers.</li>
+					<li>Develop gfscorecenter.js into separate JS files -- perhaps creating a web.js file, a server.js file, and a third file to handle and direct requests.</li>
+				</ul>
+			</div>
+	<h3>Conclusion</h3>
+		<p>As it is now, the web site and application Scorecenter lacks several basic security measures for the protection of its database and preservation of its online stability. The vulnerabilities posed in particular by the lack of sanitization of user input and by the openness of the site to repeated [unchecked] user attacks have the potential to flood and take down the site -- especially at times when the site will be most important.</br></br>
+		In order for Scorecenter to be fully functional and secure by the time of the International Online Tetris Olympiad, we recommend that our client hire us for a full security reconfiguration, estimating our comprehensive fee to be $240.</br></br>
+		Sarah McDaniel, supervisor of this analysis and author of this report, is reachable at <a id="email" href="mailto:sarah.mcdaniel@tufts.edu">Sarah.McDaniel@tufts.edu</a> for questions, comments, further consultation, and estimates for future analyses.</p>
+	<h3>See also</h3>
+		<a href="http://www.freetetris.org/"><p>Tetris</br></br><img src="tetris.jpg" id="tetris" width="35" height="35" alt="Tetris game"/></p></a>
+</body>
+</html>
