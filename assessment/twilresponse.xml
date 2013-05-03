@@ -1,5 +1,4 @@
 <?xml version='1.0' ?>
 <Response>
-	<Sms>Test</Sms>
-	<Redirect>http://google.com/</Redirect>
+	<Sms>Thank you for using FlightStalk! Text STALK to get flight information, HELP for assistance.</Sms>
 </Response>
