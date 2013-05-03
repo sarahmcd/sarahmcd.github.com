@@ -1,4 +1,4 @@
 <?xml version='1.0' ?>
 <Response>
-	<Sms>Thank you for using FlightStalk! Text STALK to get flight information, HELP for assistance.</Sms>
+	<Sms><Body></Sms>
 </Response>
